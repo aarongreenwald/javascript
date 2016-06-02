@@ -410,6 +410,7 @@ function PN_API(setup) {
   function CR(args, callback, url1, data) {
     var callback = args['callback'] || callback;
     var err = args['error'] || error;
+    var headers = args['headers'];
     var jsonp = jsonp_cb();
 
     data = data || {};
@@ -430,6 +431,7 @@ function PN_API(setup) {
     xdr({
       callback: jsonp,
       data: _get_url_params(data),
+      headers: headers,
       success: function (response) {
         _invoke_callback(response, callback, err);
       },
@@ -739,6 +741,7 @@ function PN_API(setup) {
       var auth_key = args['auth_key'] || AUTH_KEY;
       var cipher_key = args['cipher_key'];
       var channel = args['channel'];
+      var headers = args['headers'];
       var channel_group = args['channel_group'];
       var start = args['start'];
       var end = args['end'];
@@ -773,6 +776,7 @@ function PN_API(setup) {
       xdr({
         callback: jsonp,
         data: _get_url_params(params),
+        headers: headers,
         success: function (response) {
           if (typeof response == 'object' && response['error']) {
             err({ message: response['message'], payload: response['payload'] });
@@ -827,6 +831,7 @@ function PN_API(setup) {
       var end = args['end'];
       var reverse = args['reverse'];
       var limit = args['limit'];
+      var headers = args['headers'];
       var jsonp = jsonp_cb();
       var data = {};
       var url;
@@ -857,6 +862,7 @@ function PN_API(setup) {
       // Start (or Stop) Replay!
       xdr({
         callback: jsonp,
+        headers: headers,
         success: function (response) {
           _invoke_callback(response, callback, err);
         },
@@ -919,6 +925,7 @@ function PN_API(setup) {
       var store = ('store_in_history' in args) ? args['store_in_history'] : true;
       var jsonp = jsonp_cb();
       var add_msg = 'push';
+      var headers = args['headers'];
       var params;
       var url;
 
@@ -957,6 +964,7 @@ function PN_API(setup) {
       PUB_QUEUE[add_msg]({
         callback: jsonp,
         url: url,
+        headers: headers,
         data: _get_url_params(params),
         fail: function (response) {
           _invoke_error(response, err);
@@ -1456,6 +1464,7 @@ function PN_API(setup) {
       var jsonp = jsonp_cb();
       var uuids = ('uuids' in args) ? args['uuids'] : true;
       var state = args['state'];
+      var headers = args['headers'];
       var data = { uuid: UUID, auth: auth_key };
 
       if (!uuids) data['disable_uuids'] = 1;
@@ -1485,6 +1494,7 @@ function PN_API(setup) {
 
       xdr({
         callback: jsonp,
+        headers: headers,
         data: _get_url_params(data),
         success: function (response) {
           _invoke_callback(response, callback, err);
@@ -1504,6 +1514,7 @@ function PN_API(setup) {
       var callback = args['callback'] || callback;
       var err = args['error'] || function () {};
       var auth_key = args['auth_key'] || AUTH_KEY;
+      var headers = args['headers'];
       var jsonp = jsonp_cb();
       var uuid = args['uuid'] || UUID;
       var data = { auth: auth_key };
@@ -1520,6 +1531,7 @@ function PN_API(setup) {
 
       xdr({
         callback: jsonp,
+        headers: headers,
         data: _get_url_params(data),
         success: function (response) {
           _invoke_callback(response, callback, err);
@@ -1544,6 +1556,7 @@ function PN_API(setup) {
       var uuid = args['uuid'] || UUID;
       var channel = args['channel'];
       var channel_group = args['channel_group'];
+      var headers = args['headers'];
       var url;
       var data = _get_url_params({ auth: auth_key });
 
@@ -1595,6 +1608,7 @@ function PN_API(setup) {
 
       xdr({
         callback: jsonp,
+        headers: headers,
         data: _get_url_params(data),
         success: function (response) {
           _invoke_callback(response, callback, err);
@@ -1623,6 +1637,7 @@ function PN_API(setup) {
       var err = args['error'] || function () {};
       var channel = args['channel'] || args['channels'];
       var channel_group = args['channel_group'];
+      var headers = args['headers'];
       var jsonp = jsonp_cb();
       var ttl = args['ttl'];
       var r = (args['read']) ? '1' : '0';
@@ -1676,6 +1691,7 @@ function PN_API(setup) {
       xdr({
         callback: jsonp,
         data: data,
+        headers: headers,
         success: function (response) {
           _invoke_callback(response, callback, err);
         },
@@ -1703,6 +1719,7 @@ function PN_API(setup) {
     mobile_gw_provision: function (args) {
       var callback = args['callback'] || function () {};
       var auth_key = args['auth_key'] || AUTH_KEY;
+      var headers = args['headers'];
       var err = args['error'] || function () {};
       var jsonp = jsonp_cb();
       var channel = args['channel'];
@@ -1737,6 +1754,7 @@ function PN_API(setup) {
       xdr({
         callback: jsonp,
         data: params,
+        headers: headers,
         success: function (response) {
           _invoke_callback(response, callback, err);
         },
@@ -1763,6 +1781,7 @@ function PN_API(setup) {
       var channel = args['channel'];
       var channel_group = args['channel_group'];
       var auth_key = args['auth_key'];
+      var headers = args['headers'];
       var jsonp = jsonp_cb();
 
       // Make sure we have a Channel
@@ -1799,6 +1818,7 @@ function PN_API(setup) {
       xdr({
         callback: jsonp,
         data: data,
+        headers: headers,
         success: function (response) {
           _invoke_callback(response, callback, err);
         },
