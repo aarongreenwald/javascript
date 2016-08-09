@@ -1,5 +1,6 @@
-import { StatusAnnouncement } from '../flow_interfaces';
 import uuidGenerator from 'uuid';
+
+import { StatusAnnouncement } from '../flow_interfaces';
 import utils from '../utils';
 
 function createError(errorPayload: Object, type: string): Object {

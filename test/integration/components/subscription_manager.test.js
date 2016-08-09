@@ -3,9 +3,9 @@
 
 import assert from 'assert';
 import nock from 'nock';
+import lodash from 'lodash';
 import utils from '../../utils';
 import PubNub from '../../../lib/node/index.js';
-import lodash from 'lodash';
 
 describe('#components/subscription_manger', () => {
   let pubnub;

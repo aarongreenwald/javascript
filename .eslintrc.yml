@@ -16,3 +16,6 @@ rules:
   no-param-reassign: 0
 
   no-underscore-dangle: 0
+
+  no-prototype-builtins: 0
+  import/no-extraneous-dependencies: 0

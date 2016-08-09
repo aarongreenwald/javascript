@@ -103,7 +103,9 @@ export default class {
 
     const subscriptionManager = new SubscriptionManager({
       timeEndpoint,
-      leaveEndpoint, heartbeatEndpoint, setStateEndpoint,
+      leaveEndpoint,
+      heartbeatEndpoint,
+      setStateEndpoint,
       subscribeEndpoint,
       config: modules.config,
       listenerManager,

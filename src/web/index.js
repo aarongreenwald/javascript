@@ -1,4 +1,5 @@
 /* @flow */
+/* global navigator, window, localStorage */
 
 import PubNubCore from '../core/pubnub-common.js';
 import packageJSON from '../../package.json';

@@ -1,4 +1,5 @@
 /* @flow */
+/* global location, window */
 
 import superagent from 'superagent';
 
