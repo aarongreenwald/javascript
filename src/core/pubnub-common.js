@@ -1,5 +1,7 @@
 /* @flow */
 
+import uuidGenerator from 'uuid';
+
 import Networking from './components/networking';
 import Config from './components/config';
 import Crypto from './components/cryptography/index';
@@ -162,6 +164,12 @@ export default class {
   }
 
 
-  getVersion(): String { return packageJSON.version; }
+  getVersion(): String {
+    return packageJSON.version;
+  }
+
+  generateUUID(): string {
+    return uuidGenerator.v4();
+  }
 
 }
