@@ -5,9 +5,11 @@ import assert from 'assert';
 import nock from 'nock';
 import utils from '../../utils';
 import PubNub from '../../../lib/node/index.js';
+import lodash from 'lodash';
 
 describe('#components/subscription_manger', () => {
   let pubnub;
+  let pubnubWithPassingHeartbeats;
 
   before(() => {
     nock.disableNetConnect();
@@ -19,11 +21,13 @@ describe('#components/subscription_manger', () => {
 
   beforeEach(() => {
     nock.cleanAll();
-    pubnub = new PubNub({ subscribeKey: 'mySubKey', publishKey: 'myPublishKey', uuid: 'myUUID', logVerbosity: true });
+    pubnub = new PubNub({ subscribeKey: 'mySubKey', publishKey: 'myPublishKey', uuid: 'myUUID' });
+    pubnubWithPassingHeartbeats = new PubNub({ subscribeKey: 'mySubKey', publishKey: 'myPublishKey', uuid: 'myUUID', announceSuccessfulHeartbeats: true, logVerbosity: true });
   });
 
   afterEach(() => {
     pubnub.stop();
+    pubnubWithPassingHeartbeats.stop();
   });
 
   it('passes the correct presence information', (done) => {
@@ -76,5 +80,67 @@ describe('#components/subscription_manger', () => {
     });
 
     pubnub.subscribe({ channels: ['ch1', 'ch2'], withPresence: true });
+  });
+
+  it('reports when heartbeats failed', (done) => {
+    pubnub.addListener({
+      status(statusPayload) {
+        let statusWithoutError = lodash.omit(statusPayload, 'errorData');
+        assert.deepEqual({
+          category: 'PNUnknownCategory',
+          error: true,
+          operation: 'PNHeartbeatOperation',
+        }, statusWithoutError);
+        done();
+      }
+    });
+
+    pubnub.subscribe({ channels: ['ch1', 'ch2'], withPresence: true });
+  });
+
+  it('reports when heartbeats fail with error code', (done) => {
+    const scope = utils.createNock().get('/v2/presence/sub-key/mySubKey/channel/ch1%2Cch2/heartbeat')
+      .query({ pnsdk: 'PubNub-JS-Nodejs/' + pubnub.getVersion(), uuid: 'myUUID', heartbeat: 300, state: '{}' })
+      .reply(400, '{"status": 400, "message": "OK", "service": "Presence"}');
+
+    pubnub.addListener({
+      status(statusPayload) {
+        let statusWithoutError = lodash.omit(statusPayload, 'errorData');
+        assert.equal(scope.isDone(), true);
+        assert.deepEqual({
+          category: 'PNBadRequestCategory',
+          error: true,
+          operation: 'PNHeartbeatOperation',
+          statusCode: 400
+        }, statusWithoutError);
+        done();
+      }
+    });
+
+    pubnub.subscribe({ channels: ['ch1', 'ch2'], withPresence: true });
+  });
+
+
+  it('reports when heartbeats pass', (done) => {
+    const scope = utils.createNock().get('/v2/presence/sub-key/mySubKey/channel/ch1%2Cch2/heartbeat')
+      .query({ pnsdk: 'PubNub-JS-Nodejs/' + pubnub.getVersion(), uuid: 'myUUID', heartbeat: 300, state: '{}' })
+      .reply(200, '{"status": 200, "message": "OK", "service": "Presence"}');
+
+    pubnubWithPassingHeartbeats.addListener({
+      status(statusPayload) {
+        console.log(statusPayload);
+        if (statusPayload.operation !== 'PNHeartbeatOperation') return;
+
+        assert.equal(scope.isDone(), true);
+        assert.deepEqual({
+          error: false,
+          operation: 'PNHeartbeatOperation',
+          statusCode: 200
+        }, statusPayload);
+        done();
+      }
+    });
+
+    pubnubWithPassingHeartbeats.subscribe({ channels: ['ch1', 'ch2'], withPresence: true });
   });
 });

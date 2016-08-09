@@ -83,10 +83,8 @@ export default class {
     this._reconnectionManager = new ReconnectionManager({ timeEndpoint });
     this._reconnectionManager.onReconnection(() => {
       this.reconnect();
-      let reconnectedStatus: StatusAnnouncement = {};
-      reconnectedStatus.category = 'PNReconnectedCategory';
       this._subscriptionStatusAnnounced = true;
-      this._listenerManager.announceStatus(reconnectedStatus);
+      this._listenerManager.announceConnectionRestored();
     });
   }
 

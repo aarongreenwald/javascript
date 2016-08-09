@@ -15,7 +15,6 @@ describe('#core / mounting point', () => {
   });
 
   it('supports UUID generation', () => {
-    let pubnub = new PubNub({ subKey: 'hello' });
-    assert.equal(pubnub.generateUUID(), 'uuidCustom');
+    assert.equal(PubNub.generateUUID(), 'uuidCustom');
   });
 });

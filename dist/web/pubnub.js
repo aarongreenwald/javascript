@@ -110,8 +110,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, setup));
 
-	    window.addEventListener('offline', _this.stop.bind(_this));
-	    window.addEventListener('online', _this.reconnect.bind(_this));
+	    window.addEventListener('offline', function () {
+	      _this._listenerManager.announceNetworkIssues();
+	      _this.stop.bind(_this);
+	    });
+
+	    window.addEventListener('online', function () {
+	      _this._listenerManager.announceConnectionRestored();
+	      _this.reconnect.bind(_this);
+	    });
 	    return _this;
 	  }
 
@@ -274,7 +281,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var networking = new _networking2.default({ config: config, crypto: crypto, sendBeacon: sendBeacon });
 
 	    var modules = { config: config, networking: networking, crypto: crypto };
-	    var listenerManager = new _listener_manager2.default();
+	    var listenerManager = this._listenerManager = new _listener_manager2.default();
 
 	    var timeEndpoint = _endpoint2.default.bind(this, modules, timeEndpointConfig);
 	    var leaveEndpoint = _endpoint2.default.bind(this, modules, presenceLeaveEndpointConfig);
@@ -348,7 +355,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function getVersion() {
 	      return _package2.default.version;
 	    }
-	  }, {
+	  }], [{
 	    key: 'generateUUID',
 	    value: function generateUUID() {
 	      return _uuid2.default.v4();
@@ -3227,10 +3234,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._reconnectionManager = new _reconnection_manager2.default({ timeEndpoint: timeEndpoint });
 	    this._reconnectionManager.onReconnection(function () {
 	      _this.reconnect();
-	      var reconnectedStatus = {};
-	      reconnectedStatus.category = 'PNReconnectedCategory';
 	      _this._subscriptionStatusAnnounced = true;
-	      _this._listenerManager.announceStatus(reconnectedStatus);
+	      _this._listenerManager.announceConnectionRestored();
 	    });
 	  }
 
@@ -3720,6 +3725,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._listeners.forEach(function (listener) {
 	        if (listener.message) listener.message(announce);
 	      });
+	    }
+	  }, {
+	    key: 'announceConnectionRestored',
+	    value: function announceConnectionRestored() {
+	      var reconnectedStatus = {};
+	      reconnectedStatus.category = 'PNReconnectedCategory';
+	      this.announceStatus(reconnectedStatus);
+	    }
+	  }, {
+	    key: 'announceNetworkIssues',
+	    value: function announceNetworkIssues() {
+	      var reconnectedStatus = {};
+	      reconnectedStatus.category = 'PNNetworkIssuesCategory';
+	      this.announceStatus(reconnectedStatus);
 	    }
 	  }]);
 
@@ -5517,6 +5536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			"karma-mocha": "^1.1.1",
 			"karma-phantomjs-launcher": "1.0.1",
 			"karma-spec-reporter": "0.0.26",
+			"lodash": "^4.14.2",
 			"mocha": "2.5.3",
 			"nock": "^8.0.0",
 			"phantomjs-prebuilt": "2.1.7",

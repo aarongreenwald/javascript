@@ -90,7 +90,7 @@ export default class {
     const networking = new Networking({ config, crypto, sendBeacon });
 
     let modules = { config, networking, crypto };
-    const listenerManager = new ListenerManager();
+    const listenerManager = this._listenerManager = new ListenerManager();
 
     // new
     const timeEndpoint = endpointCreator.bind(this, modules, timeEndpointConfig);
@@ -168,7 +168,7 @@ export default class {
     return packageJSON.version;
   }
 
-  generateUUID(): string {
+  static generateUUID(): string {
     return uuidGenerator.v4();
   }
 
