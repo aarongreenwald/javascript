@@ -43,6 +43,7 @@ import { InternalSetupStruct } from './flow_interfaces';
 export default class {
 
   _config: Config;
+  _listenerManager: ListenerManager;
 
   // tell flow about the mounted endpoint
   time: Function;
